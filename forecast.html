@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Weather Forecast Site</title>
+        <link rel="stylesheet" href="css/style.css"/>
+    </head>
+    <body>
+        <h1>Weather Forecast Site</h1>
+
+        <div style="float:right">
+            Preferred Temperature Unit:
+            <br>            
+            <input type="radio" name="rbTempUnit" value="C" checked onclick="changePrefUnit();"/>Celsius
+            <input type="radio" name="rbTempUnit" value="F" onclick="changePrefUnit();"/>Fahrenheit
+        </div>
+        <br><br>
+        <hr>
+
+        <!-- Todays forecast -->
+        <div>
+            <!-- Left Button (Previous Day) -->
+            <img class="leftButton" src="images/leftArrow.png" onclick="prevDay();"/>
+
+            <!-- The Weather details -->
+            <div class="centerDiv">
+                <p class="temperatureText" id="pDay">Todays Forecast</p>
+                <br>
+                <img class="mainWeather" src="images/cloudy.png" />
+                <br>
+                <p class="temperatureText" id="pTemperature">100</p>
+                <p class="quoteText" id="pMessage">Have a nice day!</p>
+            </div>
+
+            <!-- Right Button (Next Day) -->
+            <img class="rightButton" src="images/rightArrow.png" onclick="nextDay();"/>
+
+        </div>
+
+        <br>
+
+        <!-- 7 day forecast -->
+        <div class="botDiv">
+            <p class="quoteText">7 Day Forecast</p>
+            <div id="dWeekForecast">
+                
+            </div>
+        </div>
+
+        <!-- Javascript -->
+        <script src="js/forecast.js"></script>
+        <script>
+            // Globals
+            var forecastData = [];
+
+            var currentDayIndex = 0; // This keeps track of the current day
+
+            var weatherImages = ["cloudy.png", "rain.png", "snowing.png", "storm.png", "sun.png", "sunnyRain.png", "tornado.png"];
+
+            var quotes = ["Enjoy your day!", "Brrr.. its cold out there?", "Cloudy with a chance of.. meatballs?", "How you feeling? HOT HOT HOT!", "Great day for swimming!", "Best to stay indoors today.", "At least its not snowing!", "Feels Like Spring!", "Feels like Summer!", "The Winds of Winter are howling!", "Are the leaves changing color? Its Fall!", "Nice day for fishing isnt it?", "Get out the sunscreen!", "TAKE COVER!", "Grab an umbrella!"];
+
+            // Startup
+            forecastData.push( new Forecast("Monday" , 23, "C", weatherImages[1], "Grab an Umbrella!") );
+            forecastData.push( new Forecast("Tuesday" , 85, "F", weatherImages[4], "Get out the sunscreen!") );
+            forecastData.push( new Forecast("Wednesday" , 45, "C", weatherImages[6], "TAKE COVER!") );
+
+            // Test our Display function
+            //displayTodaysForecast(forecastData[1]);
+            //displayTodaysForecast(forecastData[2]);
+
+            // Create some random forecast days, using function in forecast.js
+            var numDays = 28;
+            dayTracker = forecastData.length - 1; // remove if no other forecast days were created
+            for (var i = 1; i <= numDays; i++)
+            {
+                forecastData.push(generateRandomForecast());
+            }
+
+            // Display first day of the week
+            displayTodaysForecast(forecastData[currentDayIndex]);
+            displayWeekForecast();
+
+            // This function will be in charge of displaying todays weather
+            function displayTodaysForecast(today)
+            {
+                var theDay = document.getElementById("pDay");
+                var theImage = document.getElementsByClassName("mainWeather")[0]; // this function returns an HTML Collection (array), point to an index to retrieve the element
+                var theTemp = document.getElementById("pTemperature");
+                var theMessage = document.getElementById("pMessage");
+
+                // Populate with object data
+                theDay.innerText = today.day;
+                theImage.src = "images/" + today.image; // pointing to image folder
+                theMessage.innerText = today.message;
+
+                // Determine the unit the user prefers, and output it
+                var radioResult = document.querySelector("input[name='rbTempUnit']:checked").value
+                if ( radioResult == "C" )
+                {
+                    theTemp.innerText = today.celsiusTemp();
+                }
+                else if ( radioResult == "F" )
+                {
+                    theTemp.innerText = today.fahrenheitTemp();
+                }
+                
+            }
+
+
+            /* Events */
+            // Radio Buttons Click Event
+            function changePrefUnit()
+            {
+                // display forecast
+                displayTodaysForecast(forecastData[currentDayIndex]);
+            }
+
+            // Previous Day Click Event
+            function prevDay()
+            {
+                // Decrement, as long as it is equal to or greater than 0
+                if ((currentDayIndex - 1) >= 0)
+                {
+                    currentDayIndex--;
+                }
+
+                // display forecast
+                displayTodaysForecast(forecastData[currentDayIndex]);
+                displayWeekForecast();
+            }
+
+            // Next Day Click Event
+            function nextDay()
+            {
+                // Increment the current day 
+                currentDayIndex++;
+
+                // Check that it does not exceed the bounds of the array
+                if (currentDayIndex >= forecastData.length)
+                {
+                    currentDayIndex = forecastData.length - 1;
+                }
+
+                /*
+                // A different approach to the same problem
+                if ((currentDayIndex + 1) < forecastData.length)
+                {
+                    currentDayIndex++;
+                }
+                */
+
+                // display forecast
+                displayTodaysForecast(forecastData[currentDayIndex]);
+                displayWeekForecast();
+            }
+
+            function displayWeekForecast()
+            {
+                var theWeekDiv = document.getElementById("dWeekForecast");
+                theWeekDiv.innerHTML = "";
+
+                var theTable = document.createElement("table");
+				theTable.width = "100%";
+                var theTbody = document.createElement("tbody");
+                var theRow = document.createElement("tr");
+
+                // display the 7 days following the current day index
+                for (var i = currentDayIndex + 1; i <= currentDayIndex + 7; i++)
+                {
+                    // Ensure we stay within the bounds of the array
+                    if (i < forecastData.length)
+                    {
+                        // display this days info to table column
+                        var theColumn = document.createElement("td");
+
+                        // create elements
+                        var theDay = document.createElement("p");
+                        theDay.innerText = forecastData[i].day;
+
+                        var theImg = document.createElement("img");
+                        theImg.src = "images/" + forecastData[i].image;
+                        theImg.height = 32;
+                        theImg.width = 32;
+
+                        // append elements to column
+                        theColumn.appendChild(theDay);
+                        theColumn.appendChild(theImg);
+
+                        // append column to row
+                        theRow.appendChild(theColumn);
+                    } 
+
+                } // end for
+
+                // Append elements to table
+                theTbody.appendChild(theRow);
+                theTable.appendChild(theTbody);
+                theWeekDiv.appendChild(theTable);
+
+
+            } // end function
+
+        </script>
+
+        
+    </body>
+</html>

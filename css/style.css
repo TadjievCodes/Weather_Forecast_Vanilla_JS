@@ -1,0 +1,60 @@
+body {
+    text-align: center;
+    background-color: lightblue;
+}
+
+.centerDiv {
+    float: left;
+    width: 49%;
+    border: 2px solid darkblue;
+}
+
+.leftButton {
+    float: left;
+    width: 25%;
+}
+
+.leftButton:hover {
+    background-color: skyblue;
+}
+
+.rightButton {
+    float: right;
+    width: 25%;
+}
+
+.rightButton:hover {
+    background-color: skyblue;
+}
+
+.temperatureText {
+    color: darkblue;
+    font-size: 48px;
+    font-weight: bold;
+}
+
+.quoteText {
+    color: black;
+    font-size: 28px;
+    font-style: italic;
+}
+
+.botDiv {
+    position: fixed;
+    bottom: 0;
+    padding: 5px;
+    margin-bottom: 5px;
+    width: 98%;
+    border: 2px solid darkblue;
+}
+
+.mainWeather {
+    height: 120px;
+    width: 120px;
+    border: 1px solid skyblue;
+}
+
+table, tr, td {
+    border:1px solid black;
+}
+
